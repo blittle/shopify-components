@@ -10,6 +10,9 @@ createCustomElement(
     }
 
     render() {
+      const width = this.getAttribute("width") || 128;
+      const height = this.getAttribute("height") || 128;
+
       const line = getCartLine(this);
       const img = line?.merchandise?.image;
       return (
@@ -20,13 +23,13 @@ createCustomElement(
               display: flex;
             }
             img {
-              width: 128px;
-              height: 128px;
+              width: ${width + "".trim()}px;
+              height: ${height + "".trim()}px;
               object-fit: contain;
             }
           </style>
 
-          <${Image} ...${img} width=${128} height=${128} />
+          <${Image} ...${img} width=${width} height=${height} />
         `
       );
     }
@@ -37,5 +40,9 @@ function Image(img) {
   const scale = 128 / Math.max(img.width, img.height);
   const width = scale * img.width;
   const height = scale * img.height;
-  return html`<img src=${img.url} width=${width} height=${height} />`;
+  return html`<img
+    src=${img.url + "&width=" + img.width * 1.5 + "&height=" + img.height * 1.5}
+    width=${width}
+    height=${height}
+  />`;
 }

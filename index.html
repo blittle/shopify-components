@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script type="module" src="src/main.ts"></script>
+  </head>
+  <body>
+    <shopify-cart>
+      <button
+        shopify-add-line-item="gid://shopify/ProductVariant/41007289630776"
+      >
+        Add to cart hydrogen
+      </button>
+      <button
+        shopify-add-line-item="gid://shopify/ProductVariant/41007342321720"
+      >
+        Add to cart liquid
+      </button>
+      <shopify-cart-line>
+        <template>
+          <div style="display: flex; gap: 5px">
+            <shopify-cart-line-image></shopify-cart-line-image>
+            <span><shopify-cart-line-title></shopify-cart-line-title></span>
+            <span
+              ><shopify-cart-line-quantity></shopify-cart-line-quantity
+            ></span>
+            <span>$<shopify-cart-line-amount></shopify-cart-line-amount></span>
+            <span>
+              <button shopify-remove-line-item>Remove</button>
+            </span>
+            <shopify-cart-line-options>
+              <template>
+                <div class="display: flex; gap: 5px;">
+                  <div>
+                    <shopify-cart-line-option-name></shopify-cart-line-option-name>
+                    <shopify-cart-line-option-value></shopify-cart-line-option-value>
+                  </div>
+                </div>
+              </template>
+            </shopify-cart-line-options>
+          </div>
+        </template>
+      </shopify-cart-line>
+      <div>
+        <span
+          >Subtotal:
+          <strong
+            >$<shopify-cart-subtotal-amount
+            ></shopify-cart-subtotal-amount></strong
+        ></span>
+      </div>
+      <div>
+        <span
+          >Total:
+          <strong
+            >$<shopify-cart-total-amount></shopify-cart-total-amount></strong
+        ></span>
+      </div>
+      <div>
+        <a shopify-checkout>Checkout</a>
+      </div>
+    </shopify-cart>
+  </body>
+</html>

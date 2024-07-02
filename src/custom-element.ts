@@ -5,6 +5,9 @@ export class PreactElement extends HTMLElement {
   _render;
   _rerender;
 
+  originalTemplate: HTMLTemplateElement;
+  template: HTMLElement;
+
   constructor() {
     super();
     this._render = this.render.bind(this);
@@ -26,6 +29,19 @@ export class PreactElement extends HTMLElement {
     render(h(this._render, props), this);
   }
   render() {}
+
+  getTemplate() {
+    if (this.originalTemplate) return;
+    const tpl = [].find.call(
+      this.children || [],
+      (n) =>
+        n.name === "template" ||
+        (n.localName === "template" && !n.hasAttribute("shadowrootmode"))
+    );
+    if (!tpl) return;
+    this.originalTemplate = tpl;
+    this.template = tpl.content?.firstElementChild ?? tpl.children[0];
+  }
 }
 
 export function createCustomElement(

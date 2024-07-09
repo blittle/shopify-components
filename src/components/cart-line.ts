@@ -2,7 +2,7 @@ import { createCustomElement, PreactElement } from "../custom-element";
 import { getCart } from "./cart";
 import { CartLine } from "@shopify/hydrogen/storefront-api-types";
 import { flattenConnection } from "@shopify/hydrogen";
-import { renderTemplateFromItems } from "../parser";
+import { getDataProperties, renderTemplateFromItems } from "../utils";
 
 interface CartLineElement extends HTMLElement {
   _item: CartLine;
@@ -16,10 +16,14 @@ createCustomElement(
 
     constructor() {
       super();
-      this.getTemplate();
     }
 
     render() {
+      const template = this.getTemplate();
+      const properties = getDataProperties(template);
+
+      console.log(properties);
+
       const { data: cart } = getCart(this);
       let items = (
         cart?.lines ? flattenConnection(cart.lines) : []
@@ -28,7 +32,7 @@ createCustomElement(
       this.items = items;
 
       return renderTemplateFromItems(
-        this.template?.outerHTML,
+        template,
         items,
         "id",
         "data-cart-line-id"

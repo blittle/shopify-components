@@ -20,60 +20,45 @@
         letter-spacing: 0.06em;
       }
     </style>
-    <shopify-cart>
-      <h4>Your Cart ($CAD)</h4>
-      <button
-        shopify-add-line-item="gid://shopify/ProductVariant/41007289630776"
-      >
-        Add to cart hydrogen
-      </button>
-      <button
-        shopify-add-line-item="gid://shopify/ProductVariant/41007342321720"
-      >
-        Add to cart liquid
-      </button>
-      <shopify-cart-line>
-        <template>
-          <div style="display: flex; gap: 5px">
-            <img
-              src="{{line.merchandise.image.url}}&amp;width=128&height=128"
-              alt=""
-              width="128"
-            />
-            <span>{{line.merchandise.title}}</span>
-            <span>{{line.cost.totalAmount.amount}}</span>
-            <shopify-cart-line-options>
-              <template>
-                <div class="display: flex; gap: 5px;">
-                  <span>{{option.name}}</span>
-                  <span>{{option.value}}</span>
-                </div>
-              </template>
-            </shopify-cart-line-options>
-            <span>
-              <button shopify-remove-line-item>Remove</button>
-            </span>
+    <button shopify-add-line-item="gid://shopify/ProductVariant/41007289630776">
+      Add to cart hydrogen
+    </button>
+    <button shopify-add-line-item="gid://shopify/ProductVariant/41007342321720">
+      Add to cart liquid
+    </button>
+    <shopify-cart
+      id="gid://shopify/Cart/Z2NwLXVzLWNlbnRyYWwxOjAxSjFXRFlDUjRBRjI5RjZDSlE1UlpHOEZQ?key=4a8d9b3e86909435b691b4398a0221e"
+    >
+      <template name="loading"><div>Loading cart</div></template>
+      <template name="error"><div>Error loading cart</div></template>
+      <template name="empty"><div>You have no items in the cart</div></template>
+      <template>
+        <div>
+          <h1>Your cart</h1>
+          <shopify-repeat data="cart.lines" first="10">
+            <template>
+              <div style="display: flex; gap: 10px">
+                <h2>{{line.merchandise.title}}</h2>
+                <div>{{line.quantity}}</div>
+              </div>
+            </template>
+          </shopify-repeat>
+          <div>
+            <span
+              >Subtotal:
+              <strong>${{cart.cost.subtotalAmount.amount}}</strong></span
+            >
           </div>
-        </template>
-      </shopify-cart-line>
-      <div>
-        <span
-          >Subtotal:
-          <strong
-            >$<shopify-cart-subtotal-amount
-            ></shopify-cart-subtotal-amount></strong
-        ></span>
-      </div>
-      <div>
-        <span
-          >Total:
-          <strong
-            >$<shopify-cart-total-amount></shopify-cart-total-amount></strong
-        ></span>
-      </div>
-      <div>
-        <a shopify-checkout>Checkout</a>
-      </div>
+          <div>
+            <span
+              >Total: <strong>${{cart.cost.totalAmount.amount}}</strong></span
+            >
+          </div>
+          <div>
+            <a href="{{cart.checkoutUrl}}">Checkout</a>
+          </div>
+        </div>
+      </template>
     </shopify-cart>
   </body>
 </html>

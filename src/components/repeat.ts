@@ -1,19 +1,14 @@
 import type { Cart as CartType } from "@shopify/hydrogen/storefront-api-types";
 import { PartialDeep } from "type-fest";
-import { ShopifyCart } from "../cart-client";
+import { cartClient, ShopifyCart } from "../cart-client";
 import { createCustomElement, PreactElement } from "../custom-element";
-import { cartClient } from "../cart-client";
 import { queueData, renderTemplate } from "../utils";
 
-interface CartUpdateEvent extends Event {
-  detail?: PartialDeep<CartType>;
-}
-
-class Cart extends PreactElement {
+class Repeat extends PreactElement {
+  _fetchData: () => void;
   data: PartialDeep<CartType> | undefined;
   cart: ShopifyCart;
   error: Error | undefined;
-  _fetchData: () => void;
 
   constructor() {
     super();
@@ -32,11 +27,22 @@ class Cart extends PreactElement {
   }
 
   fetchData() {
+    const prefix = this.getAttribute("data");
+
+    if (!prefix) {
+      throw new Error("data attribute is required");
+    }
+
     queueData(
-      this.properties,
+      this.properties.map(
+        (prop) => prefix + "." + prop.substring(prop.indexOf(".") + 1)
+      ),
       {
         cart: {
           id: cartClient.cartId,
+        },
+        [prefix.substring(prefix.lastIndexOf(".") + 1)]: {
+          first: parseInt(this.getAttribute("first")!, 10),
         },
       },
       {
@@ -66,4 +72,4 @@ class Cart extends PreactElement {
   }
 }
 
-createCustomElement("cart", Cart);
+createCustomElement("repeat", Repeat);

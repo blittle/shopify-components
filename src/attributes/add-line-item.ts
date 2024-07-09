@@ -1,6 +1,5 @@
-import { getCart } from "../components/cart";
+import { cartClient } from "../cart-client";
 import { createCustomAttribute, CustomAttribute } from "../custom-attribute";
-import { cartEmitter } from "../event-emitter";
 
 class AddLineItem extends CustomAttribute {
   addLine: () => Promise<void>;
@@ -12,13 +11,9 @@ class AddLineItem extends CustomAttribute {
 
     this.addLine = async () => {
       el.setAttribute("disabled", "true");
-      const { cart } = getCart(el);
 
-      const cartResponse = await cart.addCartLines([
-        { merchandiseId: variant, quantity: 1 },
-      ]);
+      await cartClient.addCartLines([{ merchandiseId: variant, quantity: 1 }]);
 
-      cartEmitter.emit("cart:updated", cartResponse);
       el.removeAttribute("disabled");
     };
   }

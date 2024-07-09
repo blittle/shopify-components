@@ -1,26 +1,40 @@
 import { render, h } from "htm/preact";
-import { cartEmitter } from "./event-emitter";
+import { getDataProperties } from "./utils";
+
+export type TEMPLATE_TYPE = "loading" | "error" | "empty" | "default";
 
 export class PreactElement extends HTMLElement {
   _render;
   _rerender;
+  properties: string[];
 
-  originalTemplate: HTMLTemplateElement;
-  template: HTMLElement;
+  activeTemplate: TEMPLATE_TYPE = "loading";
+
+  originalTemplates: {
+    default?: HTMLTemplateElement;
+    loading?: HTMLTemplateElement;
+    error?: HTMLTemplateElement;
+    empty?: HTMLTemplateElement;
+  };
+
+  templates: {
+    default?: string;
+    loading?: string;
+    error?: string;
+    empty?: string;
+  } = {};
 
   constructor() {
     super();
     this._render = this.render.bind(this);
     this._rerender = this.rerender.bind(this);
-
-    cartEmitter.on("cart:initialized", this._rerender);
-    cartEmitter.on("cart:updated", this._rerender);
-  }
-  disconnectedCallback() {
-    cartEmitter.off("cart:initialized", this._rerender);
-    cartEmitter.off("cart:updated", this._rerender);
+    this.originalTemplates = {};
+    this.templates = {};
   }
   connectedCallback() {
+    this.getTemplates();
+    this.properties = getDataProperties(this.getTemplate("default"));
+    this.activeTemplate = "loading";
     this.rerender();
   }
   rerender() {
@@ -28,19 +42,37 @@ export class PreactElement extends HTMLElement {
     for (const { name, value } of this.attributes) props[name] = value;
     render(h(this._render, props), this);
   }
+  setTemplate(name: TEMPLATE_TYPE) {
+    this.activeTemplate = name;
+    this.rerender();
+  }
   render() {}
 
-  getTemplate() {
-    if (this.originalTemplate) return;
-    const tpl = [].find.call(
-      this.children || [],
-      (n) =>
-        n.name === "template" ||
-        (n.localName === "template" && !n.hasAttribute("shadowrootmode"))
-    );
-    if (!tpl) return;
-    this.originalTemplate = tpl;
-    this.template = tpl.content?.firstElementChild ?? tpl.children[0];
+  getTemplate(name: TEMPLATE_TYPE): string {
+    return this.templates[name]!;
+  }
+
+  getTemplates(): void {
+    for (const child of this.children) {
+      if (child.localName === "template") {
+        const name = child.getAttribute("name") || "default";
+        this.originalTemplates[name] = child;
+
+        const templateContent =
+          child.content?.firstElementChild ?? child.children[0];
+
+        if (!templateContent)
+          throw new Error("The template must have a single root element");
+
+        this.templates[name] = templateContent.outerHTML;
+      }
+    }
+
+    if (!this.templates.default)
+      throw new Error("Must have at least a default template");
+
+    if (!this.templates.loading)
+      this.templates.loading = this.templates.default;
   }
 }
 

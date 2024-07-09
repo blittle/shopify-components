@@ -128,7 +128,8 @@ export class ShopifyCart {
   private accessToken: string;
   private apiVersion: string;
   private storage: "session" | "local";
-  private _initialize: Promise<string | void>;
+  private listeners: Array<Function> = [];
+  public initialized: Promise<string | void>;
   public cartId: string | undefined;
 
   constructor({
@@ -148,7 +149,7 @@ export class ShopifyCart {
     this.cartId = undefined;
     this.storage = storage;
 
-    this._initialize = this.initialize();
+    this.initialized = this.initialize();
   }
 
   // Wrapper method for graphQL storefront API requests, takes a GQL Query string & an object of variables.
@@ -226,7 +227,7 @@ export class ShopifyCart {
   }
 
   public async getCart(id?: string): Promise<Cart | void> {
-    await this._initialize;
+    await this.initialized;
 
     try {
       const request = await this.graphqlRequest<{ cart: Cart }>({
@@ -274,15 +275,11 @@ export class ShopifyCart {
           lines,
         },
       });
-
-      if (request === undefined) {
-        return;
-      }
-
-      return request.cartLinesAdd.cart;
     } catch (err) {
       console.error(err);
     }
+
+    this.notifyListeners();
   }
 
   public async removeCartLines(lineIds: string[]): Promise<Cart | void> {
@@ -311,15 +308,11 @@ export class ShopifyCart {
           lineIds,
         },
       });
-
-      if (request === undefined) {
-        return;
-      }
-
-      return request.cartLinesRemove.cart;
     } catch (err) {
       console.error(err);
     }
+
+    this.notifyListeners();
   }
 
   public async updateCartLines(
@@ -350,15 +343,23 @@ export class ShopifyCart {
           lines,
         },
       });
-
-      if (request === undefined) {
-        return;
-      }
-
-      return request.cartLinesUpdate.cart;
     } catch (err) {
       console.error(err);
     }
+
+    this.notifyListeners();
+  }
+
+  public addCartUpdateListener(callback: Function): void {
+    this.listeners.push(callback);
+  }
+
+  public removeCartUpdateListener(callback: Function): void {
+    this.listeners = this.listeners.filter((listener) => listener !== callback);
+  }
+
+  private async notifyListeners() {
+    this.listeners.forEach((listener) => listener());
   }
 
   private async initialize(): Promise<string | void> {
@@ -391,3 +392,9 @@ export class ShopifyCart {
     return cart;
   }
 }
+
+export const cartClient = new ShopifyCart({
+  storefront: "https://hydrogen-preview.myshopify.com",
+  accessToken: "33ad0f277e864013b8e3c21d19432501",
+  apiVersion: "2024-04",
+});

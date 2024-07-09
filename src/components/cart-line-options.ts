@@ -4,7 +4,7 @@ import { createCustomElement, PreactElement } from "../custom-element";
 import { type SelectedOption } from "@shopify/hydrogen/storefront-api-types";
 import { getCartLine } from "./cart-line";
 import { PartialDeep } from "type-fest";
-import { renderTemplateFromItems } from "../parser";
+import { renderTemplateFromItems } from "../utils";
 
 interface CartLineOptionElement extends HTMLElement {
   _item: SelectedOption;

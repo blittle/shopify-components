@@ -44,6 +44,7 @@ class Collection extends PreactElement {
     gqlRequest<{ collection: CollectionData | null }>(query, {}).then(
       (resp) => {
         if (resp?.errors) {
+          this.data = resp?.errors[0];
           this.setTemplate("error");
           return;
         } else if (!resp?.data?.collection) {
@@ -60,7 +61,7 @@ class Collection extends PreactElement {
     const template = this.getTemplate(this.activeTemplate);
 
     const renderedTemplate =
-      this.activeTemplate === "default"
+      this.activeTemplate === "default" || this.activeTemplate === "error"
         ? renderTemplate(template, this.queryAst, this.data)
         : template;
 

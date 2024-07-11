@@ -6,61 +6,61 @@
     <title>Document</title>
     <script type="module" src="src/main.ts"></script>
   </head>
-  <body>
-    <shopify-cart>
-      <button
-        shopify-add-line-item="gid://shopify/ProductVariant/41007289630776"
+
+  <body style="position: relative">
+    <shopify-collection handle="freestyle">
+      <template name="loading"><div>Loading...</div></template>
+      <template name="empty"><div>Collection doesn't exist</div></template>
+      <template name="error"
+        ><div>Error loading collection: {{message}}</div></template
       >
-        Add to cart hydrogen
-      </button>
-      <button
-        shopify-add-line-item="gid://shopify/ProductVariant/41007342321720"
-      >
-        Add to cart liquid
-      </button>
-      <shopify-cart-line>
-        <template>
-          <div style="display: flex; gap: 5px">
-            <shopify-cart-line-image></shopify-cart-line-image>
-            <span><shopify-cart-line-title></shopify-cart-line-title></span>
-            <span
-              ><shopify-cart-line-quantity></shopify-cart-line-quantity
-            ></span>
-            <span>$<shopify-cart-line-amount></shopify-cart-line-amount></span>
-            <span>
-              <button shopify-remove-line-item>Remove</button>
-            </span>
-            <shopify-cart-line-options>
-              <template>
-                <div class="display: flex; gap: 5px;">
-                  <div>
-                    <shopify-cart-line-option-name></shopify-cart-line-option-name>
-                    <shopify-cart-line-option-value></shopify-cart-line-option-value>
-                  </div>
-                </div>
-              </template>
-            </shopify-cart-line-options>
-          </div>
-        </template>
-      </shopify-cart-line>
-      <div>
-        <span
-          >Subtotal:
-          <strong
-            >$<shopify-cart-subtotal-amount
-            ></shopify-cart-subtotal-amount></strong
-        ></span>
-      </div>
-      <div>
-        <span
-          >Total:
-          <strong
-            >$<shopify-cart-total-amount></shopify-cart-total-amount></strong
-        ></span>
-      </div>
-      <div>
-        <a shopify-checkout>Checkout</a>
-      </div>
-    </shopify-cart>
+      <template>
+        <div>
+          <h1>{{ collection.title }}</h1>
+          <p>{{ collection.description }}</p>
+          <shopify-repeat type="collection.products" first="2">
+            <template>
+              <div>
+                <h3>{{ product.title }}</h3>
+                <p>{{ product.description }}</p>
+                <shopify-repeat
+                  type="product.variants"
+                  first="2"
+                  style="display: flex"
+                >
+                  <template>
+                    <div>
+                      <h4>{{ variant.title }}</h4>
+                      <div>
+                        <img src="{{ variant.image.url }}" height="300" />
+                      </div>
+                      <div><button>Add to cart</button></div>
+                    </div>
+                  </template>
+                </shopify-repeat>
+              </div>
+            </template>
+          </shopify-repeat>
+        </div>
+      </template>
+    </shopify-collection>
+    <div
+      style="
+        right: 0;
+        top: 0;
+        position: fixed;
+        width: 300px;
+        height: 80px;
+        overflow: auto;
+        background-color: black;
+        color: #ddd;
+        padding: 12px;
+        font-size: 12px;
+        font-family: monospace;
+      "
+    >
+      <div style="margin-bottom: 4px"><strong>GraphQL Query: </strong></div>
+      <div id="query"></div>
+    </div>
   </body>
 </html>

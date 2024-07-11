@@ -1,9 +1,0 @@
-<h1>{{collection.title}}</h1>
-<shopify-repeat type="products" first="10">
-  <template>
-    <b>{{product.title}}</b>
-    <shopify-repeat type="variants" first="1">
-      <template> {{variant.selectedOptions.name}} </template>
-    </shopify-repeat>
-  </template>
-</shopify-repeat>

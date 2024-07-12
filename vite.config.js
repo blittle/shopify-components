@@ -12,16 +12,5 @@ module.exports = defineConfig({
       },
       fileName: (format, name) => `${name}.${format}.js`,
     },
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          jsonWorker: [`${prefix}/language/json/json.worker`],
-          cssWorker: [`${prefix}/language/css/css.worker`],
-          htmlWorker: [`${prefix}/language/html/html.worker`],
-          tsWorker: [`${prefix}/language/typescript/ts.worker`],
-          editorWorker: [`${prefix}/editor/editor.worker`],
-        },
-      },
-    },
   },
 });

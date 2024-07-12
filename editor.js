@@ -90,9 +90,9 @@ function updatePreivew() {
     <div
       style="
         right: 0;
-        top: 0;
+        bottom: 0;
         position: fixed;
-        width: 300px;
+        width: 50%;
         height: 80px;
         overflow: auto;
         background-color: black;

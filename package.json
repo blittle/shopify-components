@@ -19,8 +19,8 @@
   "dependencies": {
     "@shopify/hydrogen": "^2024.4.7",
     "htm": "^3.1.1",
-    "monaco-editor": "^0.50.0",
-    "preact": "^10.22.0"
+    "preact": "^10.22.0",
+    "prism-code-editor": "^3.3.2"
   },
   "devDependencies": {
     "happy-dom": "^14.12.3",

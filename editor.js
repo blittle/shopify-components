@@ -1,29 +1,13 @@
-import * as monaco from "monaco-editor";
+import {
+  minimalEditor,
+  basicEditor,
+  fullEditor,
+  readonlyEditor,
+} from "prism-code-editor/setups";
+// Importing Prism grammars
+import "prism-code-editor/prism/languages/markup";
 
-import "monaco-editor/esm/vs/basic-languages/css/css.contribution";
-import "monaco-editor/esm/vs/basic-languages/xml/xml.contribution";
-import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution";
-
-import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
-import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
-import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
-import CssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
-import HtmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-window.MonacoEnvironment = {
-  getWorker(_, label) {
-    if (label === "typescript" || label === "javascript") return new TsWorker();
-    if (label === "json") return new JsonWorker();
-    if (label === "css") return new CssWorker();
-    if (label === "html") return new HtmlWorker();
-    return new EditorWorker();
-  },
-};
-
-const editor = monaco.editor.create(document.getElementById("code-editor"), {
-  value: `
+const code = `
 <shopify-collection handle="freestyle">
   <template name="loading"><div>Loading...</div></template>
   <template name="empty"><div>Collection doesn't exist</div></template>
@@ -60,9 +44,20 @@ const editor = monaco.editor.create(document.getElementById("code-editor"), {
     </div>
   </template>
 </shopify-collection>
-    `.trim(),
-  language: "html",
-});
+    `.trim();
+
+const editor = basicEditor(
+  "#code-editor",
+  {
+    language: "html",
+    theme: "github-dark",
+    value: code,
+    onUpdate: (value) => {
+      updatePreivew(value);
+    },
+  },
+  () => console.log("ready")
+);
 
 let timeout;
 
@@ -70,12 +65,10 @@ editor.getModel().onDidChangeContent(updatePreivew);
 
 updatePreivew();
 
-function updatePreivew() {
+function updatePreivew(value) {
   clearTimeout(timeout);
 
   timeout = setTimeout(() => {
-    const value = editor.getModel().getValue();
-
     const html = `
 <!DOCTYPE html>
 <html lang="en">
